@@ -20,13 +20,13 @@ while True:
 			else:
 				lines.remove(line)
 		if not isFound:
-
-			s.sendto(data,(parentIp,parentPort))
-			data2, addr2 = s.recvfrom(1024)
-			data2 = data2.__str__() + ',' + str(time.time())
-			lines.append(data2)
-			file = open(ipsFileName, "w")
-			for line in lines:
-				file.write(line)
-			file.close()
-			s.sendto(data2.encode(), addr)
+			if parentIp != -1 and parentPort != -1:
+				s.sendto(data,(parentIp,parentPort))
+				data2, addr2 = s.recvfrom(1024)
+				data2 = data2.__str__() + ',' + str(time.time())
+				lines.append(data2)
+				file = open(ipsFileName, "w")
+				for line in lines:
+					file.write(line)
+				file.close()
+				s.sendto(data2.encode(), addr)
