@@ -2,11 +2,13 @@ import socket
 import sys
 import time
 
-myPort, parentIp, parentPort, ipsFileName = sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4]
+myPort, parentIp, parentPort, ipsFileName = int(sys.argv[1]), sys.argv[2], int(sys.argv[3]), sys.argv[4]
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-s.bind(('', int(myPort)))
+s.bind(('', myPort))
 while True:
 	data, addr = s.recvfrom(1024)
+	data = data.decode()
+	data = data[:-1]
 	file = open(ipsFileName, "r")
 	lines = file.readlines()
 	file.close()
@@ -23,10 +25,10 @@ while True:
 			if parentIp != -1 and parentPort != -1:
 				s.sendto(data,(parentIp,parentPort))
 				data2, addr2 = s.recvfrom(1024)
-				data2 = data2.__str__() + ',' + str(time.time())
-				lines.append(data2)
+				dataForFile = data2.decode() + ',' + str(time.time())
+				lines.append(dataForFile)
 				file = open(ipsFileName, "w")
 				for line in lines:
 					file.write(line)
 				file.close()
-				s.sendto(data2.encode(), addr)
+				s.sendto(data2, addr)
