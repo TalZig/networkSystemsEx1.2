@@ -8,7 +8,8 @@ s.bind(('', myPort))
 while True:
 	data, addr = s.recvfrom(1024)
 	data = data.decode()
-	data = data[:-1]
+	if data[-1] == '\n':
+		data = data[:-1]
 	file = open(ipsFileName, "r")
 	lines = file.readlines()
 	file.close()
@@ -16,19 +17,22 @@ while True:
 	for line in lines:
 		splitOfLine = line.split(sep=",")
 		if data == splitOfLine[0]:
-			if (len(splitOfLine) == 3 or float(splitOfLine[3]) - time.time()) < float(splitOfLine[2]):
+			if len(splitOfLine) == 3 or (time.time() - float(splitOfLine[3])) < float(splitOfLine[2]):
 				s.sendto(str.encode(line), addr)
 				isFound = True
 			else:
 				lines.remove(line)
-		if not isFound:
-			if parentIp != -1 and parentPort != -1:
-				s.sendto(data,(parentIp,parentPort))
-				data2, addr2 = s.recvfrom(1024)
-				dataForFile = data2.decode() + ',' + str(time.time())
-				lines.append(dataForFile)
-				file = open(ipsFileName, "w")
-				for line in lines:
-					file.write(line)
-				file.close()
-				s.sendto(data2, addr)
+	if not isFound:
+		if parentIp != -1 and parentPort != -1:
+			s.sendto(data.encode(), (parentIp, parentPort))
+			data2, addr2 = s.recvfrom(1024)
+			data2 = data2.decode()
+			if data2[-1] == '\n':
+				data2 = data2[:-1]
+			dataForFile = "\n" + data2 + ',' + str(time.time())
+			lines.append(dataForFile)
+			file = open(ipsFileName, "w")
+			for line in lines:
+				file.write(line)
+			file.close()
+			s.sendto(data2.encode(), addr)

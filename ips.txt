@@ -1,3 +1,7 @@
 www.biu.ac.il,1.2.3.4,180
 mail.biu.ac.il,1.2.3.5,240
 biu.ac.il,1.2.3.4,180
+
+
+www.google.co.il,8.8.8.8,5,1605006680.1152427
+mail.google.co.il,9.9.9.9,5,1605006704.7660217
