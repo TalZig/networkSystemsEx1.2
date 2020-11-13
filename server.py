@@ -29,10 +29,12 @@ while True:
 			data2 = data2.decode()
 			if data2[-1] == '\n':
 				data2 = data2[:-1]
-			dataForFile = "\n" + data2 + ',' + str(time.time())
+			dataForFile = data2 + "," + str(time.time())
 			lines.append(dataForFile)
 			file = open(ipsFileName, "w")
 			for line in lines:
+				if line[-1] != '\n':
+					line = line +'\n'
 				file.write(line)
 			file.close()
 			s.sendto(data2.encode(), addr)
